@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Task List</title>
+
+  <link rel="stylesheet" href="main.css">
+</head>
+<body>
+  <header>
+    <h1>Task List</h1>
+    <form>
+      <div id="new-task-form" style="display: flex; align-items: center;">
+        <input type="text" id="new-task-input" placeholder="Enter new task" onFocus="(this.placeholder='')" onBlur="setPlaceholderStatus(this)" />
+        <button type="button" id="new-task-submit">
+          <div style="display: flex; align-items: center; justify-content: center;">
+            <span id="add-icon">+</span>
+            <span id="add-text">add task</span>
+          </div>
+        </button>
+      </div>
+      <!-- <div id="task-options-icon-container">
+        <img id="task-options-toggle" src="Resources/Arrow-down.svg" alt="Arrow button to display task options" />
+      </div> -->
+      <div id="task-Options-inputs">
+        <div id="date-picker">
+          <input id="due-date-input" type="text" class="due-date-input" onFocus="(this.type='datetime-local', this.className='due-date-focused')" onBlur="setPlaceholderStatus(this)" placeholder="Due date"/>
+        </div>
+        <div id="tag-selector">
+          <input id="tag-input" type="text" placeholder="Add a tag" onFocus="(this.placeholder='')" onBlur="setPlaceholderStatus(this)">
+        </div>
+      </div>
+    </form>
+  </header>
+  <main>
+    <section class="task-list">
+      <h2>Tasks</h2>
+      <div id="deleteAll">Delete All</div>
+      <div id="tasks">
+        <div id="noTasks">
+          <div class="noTasks">There are no tasks yet</div>
+          <div class="noTasks">Enter a new task and start planning!</div>
+        </div>
+        <div class="task">
+          <div class="content">
+            <div id="task-text">
+              <input type="text" class="text" value="Remember to add edit ..." readonly />
+            </div>
+            <div id="task-attrs">
+              <input type="text" class="date" value="12/05/2022 22:05" readonly />
+              <input type="text" class="tag" value="Reminder" readonly />
+            </div>
+          </div>
+          <div id="taskActions" class="actions" style="display: flex; align-items: center;">
+            <button class="edit">Edit</button>
+            <button class="delete">Delete</button>
+          </div>
+        </div>
+        <div class="task">
+          <div class="content">
+            <div id="task-text">
+              <input type="text" class="text" value="Drink cup of coffee" readonly />
+            </div>
+            <div id="task-attrs">
+              <input type="text" class="date" value="13/05/2022 09:05" readonly />
+              <input type="text" class="tag" value="Action" style="background-color: #A1f5f2; color: black" readonly />
+            </div>
+          </div>
+          <div id="taskActions" class="actions" style="display: flex; align-items: center;">
+            <button class="edit">Edit</button>
+            <button class="delete">Delete</button>
+          </div>
+        </div>
+        <div class="task">
+          <div class="content">
+            <div id="task-text">
+              <input type="text" class="text" value="Add delete function" readonly />
+            </div>
+            <div id="task-attrs">
+              <input type="text" class="date" value="15/05/2022 19:05" readonly />
+              <input type="text" class="tag" value="ToDo" style="background-color: #e8a2e8; color: black" readonly />
+            </div>
+          </div>
+          <div id="taskActions" class="actions" style="display: flex; align-items: center;">
+            <button class="edit">Edit</button>
+            <button class="delete">Delete</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script src="main.js"></script>
+</body>
+</html>
