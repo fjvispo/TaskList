@@ -25,7 +25,7 @@ body {
 
 header {
   padding: 2rem 1rem 5rem;
-  max-width: 800px;
+  max-width: 1000px;
   width: 100%;
   margin: 0 auto;
 }
@@ -90,7 +90,7 @@ input, button{
   justify-content: space-between;
 }
 
-#date-picker {
+#date-picker, #tag-selector {
   display: flex;
   width: 49%;
   padding: 0.75rem;
@@ -111,15 +111,6 @@ input, button{
 .due-date-focused {
   color: var(--light);
   font-size: 1rem;
-}
-
-#tag-selector {
-  display: flex;
-  width: 49%;
-  padding: 0.75rem;
-  padding-left: 2rem;
-  background-color: var(--darker);
-  border-radius: 1rem;
 }
 
 #tag-input {
@@ -163,7 +154,7 @@ input, button{
 main {
   flex: 1 1 0%;
   /* padding: 2rem 1rem; */
-  max-width: 800px;
+  max-width: 1000px;
   width: 100%;
   margin: 0 auto;
 }
@@ -245,7 +236,7 @@ main {
 }
 
 #tasks .task .content .text {
-  border: green solid 1px;
+  /* border: green solid 1px; */
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
