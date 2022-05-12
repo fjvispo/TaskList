@@ -181,6 +181,16 @@ main {
   margin-bottom: 1rem;
 }
 
+#tasks {
+  /* border: #ec4899 solid 1px; */
+  /* position: fixed; */
+  max-height: 34rem;
+  overflow: scroll;
+  /* position: absolute;
+  width: 968px;
+  height: 1rem; */
+}
+
 #tasks .task {
   /* border: #6b7280 solid 1px; */
   display: flex;
@@ -190,6 +200,8 @@ main {
   border-radius: 1rem;
   margin-bottom: 1rem;
   width: 100%;
+  /* overflow-y: scroll; */
+  
 }
 
 #tasks .task .content {
@@ -321,3 +333,20 @@ main {
 }
 
 ::-webkit-scrollbar{display:none;} 
+
+.footer {
+  /* border: #ec4899 solid 1px; */
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+  margin: 1.5rem;
+  font-size: 1rem;
+  color: var(--grey);
+  opacity: 40%;
+  transition: 0.3s;
+}
+
+.footer:hover {
+  color: var(--light);
+  opacity: 100%;
+}
