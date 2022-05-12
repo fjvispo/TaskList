@@ -1,49 +1,56 @@
+const taskListDiv = document.getElementById("tasks");
+const noTasksDiv = document.getElementById('noTasks');
+const formInputs = document.querySelectorAll("form input");
+const submitButton = document.getElementById("new-task-submit");
+const deleteAllButton = document.getElementById("deleteAll");
+
 const getTasks = () => {  
   let tasks = JSON.parse(localStorage.getItem("tasks"));
-  return tasks
+  if (tasks !== null) {
+    return tasks;
+  } else {
+    return [];
+  }
 };
 
 const populateTaskList = () => {
-  let taskListDiv = document.getElementById("tasks");
+  // taskListDiv.innerHTML = '';
   let tasks = getTasks();
-  let noTasksDiv = document.getElementById('noTasks');
-  if (tasks !== null) {
-    if (tasks.length !== 0) {
-      noTasksDiv.style.display = 'none';
-      tasks.forEach((task, i) => {
-        // create taskCard
-        const taskCard = document.createElement ("div");
-        taskCard.classList.add("task");
-        taskCard.setAttribute("taskId", task.id);
-        // insert taskCard HTML
-        taskCard.innerHTML = `
-          <div class="content">
-            <div id="task-text">
-              <input type="text" class="text" value="${task.data.text}" readonly />
-            </div>
-            <div id="task-attrs">
-              <input type="text" class="date" value="${task.data.dueDate}" readonly />
-              <input type="text" class="tag" value="${task.data.tag}" readonly />
-            </div>    
+  if (tasks.length !== 0) {
+    noTasksDiv.style.display = 'none';
+    tasks.forEach((task, i) => {
+      // create taskCard
+      const taskCard = document.createElement ("div");
+      taskCard.classList.add("task");
+      taskCard.setAttribute("taskId", task.id);
+      // insert taskCard HTML
+      taskCard.innerHTML = `
+        <div class="content">
+          <div id="task-text">
+            <input type="text" class="text" value="${task.data.text}" readonly />
           </div>
-          <div id="taskActions" class="actions" style="display: flex; align-items: center;">
-            <button class="edit">Edit</button>
-            <button class="delete">Delete</button>
-          </div>  
-        `
-        taskListDiv.prepend(taskCard);
-      });
-    } else {
-      taskListDiv.innerHTML = `        
-        <div id="noTasks">
-          <div class="noTasks">There are no tasks yet</div>
-          <div class="noTasks">Enter a new task and start planning!</div>
-        </div>`;
-    }
+          <div id="task-attrs">
+            <input type="text" class="date" value="${task.data.dueDate}" readonly />
+            <input type="text" class="tag" value="${task.data.tag}" readonly />
+          </div>    
+        </div>
+        <div id="taskActions" class="actions" style="display: flex; align-items: center;">
+          <button class="edit">Edit</button>
+          <button class="delete">Delete</button>
+        </div>  
+      `
+      taskListDiv.prepend(taskCard);
+    });
+  } else {
+    taskListDiv.innerHTML = `        
+      <div id="noTasks">
+        <div class="noTasks">There are no tasks yet</div>
+        <div class="noTasks">Enter a new task and start planning!</div>
+      </div>`;
   };
 };
 
-const formInputs = document.querySelectorAll("form input");
+var taskList = populateTaskList();
 
 const resetForm = () => {
   formInputs.forEach(field => {
@@ -57,14 +64,8 @@ const validateForm = () => {
   
 };
 
-var taskList = populateTaskList();
-
-// ADD - EDIT - DELETE
-const submitButton = document.getElementById("new-task-submit");
-const deleteAllButton = document.getElementById("deleteAll");
-
 submitButton.addEventListener('click', function() {
-  const newTaskData = JSON.stringify([{
+  let newTaskData = {
     'id': Date.now(),
     'status': 'planned',
     'data': {
@@ -72,9 +73,11 @@ submitButton.addEventListener('click', function() {
       'dueDate': document.getElementById("due-date-input").value,
       'tag': document.getElementById("tag-input").value,
     }
-  }])
-  // tasks.push()
-  localStorage.setItem("tasks", newTaskData);
+  }
+  let tasks = getTasks();
+  tasks.push(newTaskData);
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+  taskListDiv.innerHTML = '';
   populateTaskList();
   resetForm();
 }); 
