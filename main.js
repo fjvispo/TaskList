@@ -14,7 +14,6 @@ const getTasks = () => {
 };
 
 const populateTaskList = () => {
-  // taskListDiv.innerHTML = '';
   let tasks = getTasks();
   if (tasks.length !== 0) {
     noTasksDiv.style.display = 'none';
@@ -24,19 +23,18 @@ const populateTaskList = () => {
       taskCard.classList.add("task");
       taskCard.setAttribute("taskId", task.id);
       // insert taskCard HTML
+      console.log(task.data.text)
+      console.log(task.data.dueDate)
+      console.log(task.data.tag)
       taskCard.innerHTML = `
         <div class="content">
-          <div id="task-text">
-            <input type="text" class="text" value="${task.data.text}" readonly />
-          </div>
-          <div id="task-attrs">
-            <input type="text" class="date" value="${task.data.dueDate}" readonly />
-            <input type="text" class="tag" value="${task.data.tag}" readonly />
-          </div>    
+            <div class="text">${task.data.text}</div>
+            <div class="date">${task.data.dueDate}</div>
+            <div class="tag">${task.data.tag}</div>
         </div>
         <div id="taskActions" class="actions" style="display: flex; align-items: center;">
-          <button class="edit">Edit</button>
-          <button class="delete">Delete</button>
+          <button class="edit" onclick="editTask(this)">Edit</button>
+          <button class="delete onclick="deleteTask(this)"">Delete</button>
         </div>  
       `
       taskListDiv.prepend(taskCard);
@@ -60,11 +58,19 @@ const resetForm = () => {
 };
 
 const validateForm = () => {
-  let hasText = formInputs
-  
+  let hasText = formInputs[0].value;
+  let hasDate = formInputs[1].value;
+  let hasTag = formInputs[2].value;
+
+  console.log('--->', hasText);
+  console.log('--->', hasDate );
+  console.log('--->', hasTag );
+
+  return hasText;
 };
 
 submitButton.addEventListener('click', function() {
+  validateForm();
   let newTaskData = {
     'id': Date.now(),
     'status': 'planned',
