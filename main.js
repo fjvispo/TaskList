@@ -13,30 +13,32 @@ const getTasks = () => {
   }
 };
 
+const createTaskCard = (task) => {
+  // create taskCard
+  const taskCard = document.createElement ("div");
+  taskCard.classList.add("task");
+  taskCard.setAttribute("id", task.id);
+  // insert taskCard HTML
+  taskCard.innerHTML = `
+    <div class="content">
+        <div class="text">${task.id}</div>
+        <div class="date">${task.data.dueDate}</div>
+        <div class="tag">${task.data.tag}</div>
+    </div>
+    <div id="taskActions" class="actions" style="display: flex; align-items: center;">
+      <button class="edit" onclick="editTask(this)">Edit</button>
+      <button class="delete" onclick="deleteTask(this.parentNode.parentNode.id)">Delete</button>
+    </div>  
+  `
+  return taskCard
+}
+
 const populateTaskList = () => {
   let tasks = getTasks();
   if (tasks.length !== 0) {
     noTasksDiv.style.display = 'none';
-    tasks.forEach((task, i) => {
-      // create taskCard
-      const taskCard = document.createElement ("div");
-      taskCard.classList.add("task");
-      taskCard.setAttribute("taskId", task.id);
-      // insert taskCard HTML
-      console.log(task.data.text)
-      console.log(task.data.dueDate)
-      console.log(task.data.tag)
-      taskCard.innerHTML = `
-        <div class="content">
-            <div class="text">${task.data.text}</div>
-            <div class="date">${task.data.dueDate}</div>
-            <div class="tag">${task.data.tag}</div>
-        </div>
-        <div id="taskActions" class="actions" style="display: flex; align-items: center;">
-          <button class="edit" onclick="editTask(this)">Edit</button>
-          <button class="delete onclick="deleteTask(this)"">Delete</button>
-        </div>  
-      `
+    tasks.forEach((task) => {
+      let taskCard = createTaskCard(task);
       taskListDiv.prepend(taskCard);
     });
   } else {
@@ -48,7 +50,7 @@ const populateTaskList = () => {
   };
 };
 
-var taskList = populateTaskList();
+populateTaskList();
 
 const resetForm = () => {
   formInputs.forEach(field => {
@@ -60,11 +62,17 @@ const resetForm = () => {
 const validateForm = () => {
   let hasText = formInputs[0].value;
   let hasDate = formInputs[1].value;
-  let hasTag = formInputs[2].value;
+  let hasTime = formInputs[2].value;
+  let hasTag = formInputs[3].value;
 
-  console.log('--->', hasText);
-  console.log('--->', hasDate );
-  console.log('--->', hasTag );
+  console.log('text --->', hasText);
+  console.log('date --->', hasDate );
+  console.log('time --->', hasTime );
+  console.log('tag  --->', hasTag );
+
+  if (hasText === '') {
+    
+  }
 
   return hasText;
 };
@@ -93,6 +101,15 @@ deleteAllButton.addEventListener('click', function() {
   populateTaskList()
 });
 
+function deleteTask(elemId) { 
+  let updatedList = getTasks().filter(task => task.id != elemId);
+  localStorage.setItem("tasks", JSON.stringify(updatedList));
+  console.log({elemId})
+  console.log("updated", updatedList)
+  taskListDiv.innerHTML = '';
+  populateTaskList();
+}
+
 function setPlaceholderStatus(elem) {
   const element = elem.id
   if (elem.value === '') {
@@ -104,9 +121,13 @@ function setPlaceholderStatus(elem) {
         elem.placeholder = 'Enter new task'
         break
       case 'due-date-input':
-        elem.className="due-date-input"
-        elem.type="text"
-        break
+        elem.className = "due-date-input"
+        elem.type = "text"
+        break;
+      case 'due-time-input':
+        elem.className = "due-time-input"
+        elem.type = "text"
+        break;
     }
   }
 };
