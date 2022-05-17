@@ -3,6 +3,7 @@ const noTasksDiv = document.getElementById('noTasks');
 const formInputs = document.querySelectorAll("form input");
 const submitButton = document.getElementById("new-task-submit");
 const deleteAllButton = document.getElementById("deleteAll");
+const deleteTaskButton = document.getElementsByClassName("delete");
 
 const getTasks = () => {  
   let tasks = JSON.parse(localStorage.getItem("tasks"));
@@ -16,18 +17,29 @@ const getTasks = () => {
 const createTaskCard = (task) => {
   // create taskCard
   const taskCard = document.createElement ("div");
-  taskCard.classList.add("task");
-  taskCard.setAttribute("id", task.id);
+  taskCard.classList.add("taskWrapper");
   // insert taskCard HTML
   taskCard.innerHTML = `
-    <div class="content">
-        <div class="text">${task.id}</div>
-        <div class="date">${task.data.dueDate}</div>
-        <div class="tag">${task.data.tag}</div>
+    <div id="${task.id}" class="task">
+      <div class="content">
+          <div class="text">${task.id}</div>
+          <div id="dueDate">
+            <span class="date">${task.data.dueDate}</span>
+            <span class="date">${task.data.dueTime}</span>
+          </div>  
+          <span class="tag">${task.data.tag}</span>
+          <div id="taskActions" class="actions" style="display: flex; align-items: center;">
+            <button class="edit">Edit</button>
+            <button class="delete" 
+              onclick="this.parentNode.parentNode.parentNode.style.width = '55%'; this.parentNode.parentNode.parentNode.nextElementSibling.style.background = 'crimson'"
+              onblur="this.parentNode.parentNode.parentNode.style.width = '100%'; this.parentNode.parentNode.parentNode.nextElementSibling.style.background = 'var(--darkest)'">Delete</button>
+          </div>
+      </div>
     </div>
-    <div id="taskActions" class="actions" style="display: flex; align-items: center;">
-      <button class="edit" onclick="editTask(this)">Edit</button>
-      <button class="delete" onclick="deleteTask(this.parentNode.parentNode.id)">Delete</button>
+    <div id="actionValidation" class="validation">
+      <span class="text">Are you sure? it's permanent.</span>
+      <button id="validationYes" onclick="deleteTask(this.parentNode.previousElementSibling.id)" >Yes</button>
+      <button id="validationNo" onclick="cancelDelete(this.parentNode.previousElementSibling.id)">No </button>
     </div>  
   `
   return taskCard
@@ -44,8 +56,9 @@ const populateTaskList = () => {
   } else {
     taskListDiv.innerHTML = `        
       <div id="noTasks">
-        <div class="noTasks">There are no tasks yet</div>
-        <div class="noTasks">Enter a new task and start planning!</div>
+        <div class="noTasks"></div>
+        <div class="noTasks"></div>
+        <div class="noTasks"></div>
       </div>`;
   };
 };
@@ -65,10 +78,10 @@ const validateForm = () => {
   let hasTime = formInputs[2].value;
   let hasTag = formInputs[3].value;
 
-  console.log('text --->', hasText);
-  console.log('date --->', hasDate );
-  console.log('time --->', hasTime );
-  console.log('tag  --->', hasTag );
+  // console.log('text --->', hasText);
+  // console.log('date --->', hasDate );
+  // console.log('time --->', hasTime );
+  // console.log('tag  --->', hasTag );
 
   if (hasText === '') {
     
@@ -85,6 +98,7 @@ submitButton.addEventListener('click', function() {
     'data': {
       'text': document.getElementById("new-task-input").value,
       'dueDate': document.getElementById("due-date-input").value,
+      'dueTime': document.getElementById("due-time-input").value,
       'tag': document.getElementById("tag-input").value,
     }
   }
@@ -101,13 +115,24 @@ deleteAllButton.addEventListener('click', function() {
   populateTaskList()
 });
 
-function deleteTask(elemId) { 
+function deleteTask(elemId) {
+  console.log(elemId); 
+  let taskToDelete = document.getElementById(elemId).parentNode;
+  taskToDelete.remove();
+  console.log(taskToDelete); 
   let updatedList = getTasks().filter(task => task.id != elemId);
   localStorage.setItem("tasks", JSON.stringify(updatedList));
-  console.log({elemId})
-  console.log("updated", updatedList)
-  taskListDiv.innerHTML = '';
-  populateTaskList();
+  // console.log({elemId})
+  // console.log("updated", updatedList)
+  // taskListDiv.innerHTML = '';
+  // populateTaskList();
+}
+
+function cancelDelete(elemId) {
+  console.log(elemId); 
+  let taskToCancel = document.getElementById(elemId);
+  console.log(taskToCancel);
+  // taskToCancel.style('width: 100%'); 
 }
 
 function setPlaceholderStatus(elem) {
