@@ -31,15 +31,29 @@ const createTaskCard = (task) => {
           <div id="taskActions" class="actions" style="display: flex; align-items: center;">
             <button class="edit">Edit</button>
             <button class="delete" 
-              onclick="this.parentNode.parentNode.parentNode.style.width = '55%'; this.parentNode.parentNode.parentNode.nextElementSibling.style.background = 'crimson'"
-              onblur="this.parentNode.parentNode.parentNode.style.width = '100%'; this.parentNode.parentNode.parentNode.nextElementSibling.style.background = 'var(--darkest)'">Delete</button>
+              onclick="this.parentNode.parentNode.parentNode.style.width = '55%'"
+              onblur="this.parentNode.parentNode.parentNode.style.width = '100%'"
+            >Delete</button>
           </div>
       </div>
     </div>
     <div id="actionValidation" class="validation">
       <span class="text">Are you sure? it's permanent.</span>
-      <button id="validationYes" onclick="deleteTask(this.parentNode.previousElementSibling.id)" >Yes</button>
-      <button id="validationNo" onclick="cancelDelete(this.parentNode.previousElementSibling.id)">No </button>
+      <div id="validationYes"
+        onclick="deleteTask(this.parentNode.previousElementSibling.id)"
+        onmouseenter="
+          this.parentNode.style.background = 'crimson'; 
+          this.children[0].style.display = 'none';
+          this.children[1].style.display = 'block'"
+        onmouseleave="this.parentNode.style.background = 'var(--darker)';
+          this.children[0].style.display = 'block';
+          this.children[1].style.display = 'none'"
+      >
+        <p>yes</p>
+        <span class="material-icons delete">delete</span>
+      </div>
+      <button id="validationNo" onmouseover="cancelDeleteEnter(this) onmouseleave=""cancelDeleteLeave(this)
+        >No</button>
     </div>  
   `
   return taskCard
@@ -118,21 +132,28 @@ deleteAllButton.addEventListener('click', function() {
 function deleteTask(elemId) {
   console.log(elemId); 
   let taskToDelete = document.getElementById(elemId).parentNode;
-  taskToDelete.remove();
   console.log(taskToDelete); 
   let updatedList = getTasks().filter(task => task.id != elemId);
   localStorage.setItem("tasks", JSON.stringify(updatedList));
+  taskToDelete.style.width = '0px';
+  setTimeout(shrinkRow, 300);
+  function shrinkRow() {taskToDelete.style.height = '0px'};
+  setTimeout(deleteRow, 500);
+  function deleteRow() {taskToDelete.remove()}
   // console.log({elemId})
   // console.log("updated", updatedList)
   // taskListDiv.innerHTML = '';
   // populateTaskList();
 }
 
-function cancelDelete(elemId) {
-  console.log(elemId); 
-  let taskToCancel = document.getElementById(elemId);
-  console.log(taskToCancel);
-  // taskToCancel.style('width: 100%'); 
+function cancelDeleteEnter(elem) {
+  console.log(elem); 
+  elem.style.opacity = '0';
+}
+
+function cancelDeleteLeave(elem) {
+  elem.style.opacity = '100';
+
 }
 
 function setPlaceholderStatus(elem) {

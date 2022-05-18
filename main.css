@@ -176,6 +176,7 @@ main {
 .noTasks {
   background-color: var(--darker);
   opacity: 20%;
+  height: 4rem;
   padding: 1.5rem 1rem;
   border-radius: 1rem;
   margin-bottom: 1rem;
@@ -207,6 +208,8 @@ main {
   /* border: #6b7280 solid 1px; */
   /* margin-bottom: 0.5rem; */
   margin-bottom: 1rem;
+  width: 100%;
+  transition: all 0.2s ease-in-out;
 }
 
 .task {
@@ -230,7 +233,7 @@ main {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  column-gap: 2rem;
+  /* column-gap: 2rem; */
   padding: 1.5rem 2rem;
   border-radius: 1rem;
   height: 4rem;
@@ -240,14 +243,15 @@ main {
   width: 100%;
   /* right: 0; */
   z-index: 1;
-  background: var(--darkest);
-  transition: all 0.2s ease-in-out;
+  background: var(--darker);
+  transition: all 0.15s ease-in;
+  /* transition: background .5s linear; */
   /* display: none; */
 }
 
-.validation:hover {
-  /* background: #111; */
-}
+/* .validation:hover {
+  background: #111;
+} */
 
 #tasks .task .content {
   /* border: red solid 1px; */
@@ -379,21 +383,36 @@ main {
 }
 
 /* validation */
+#validationYes {
+  margin-left: 1.3rem;
+}
 
 #validationYes, #validationNo {
-  /* right: 0; */
   /* border: #ec4899 solid 1px; */
   font-size: 0.9rem;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* margin-left: 1.3rem; */
+  height: 4rem;
+  width: 4rem;
   font-weight: 400;
   text-transform: uppercase;
-  color: #EEE;
-  /* cursor: progress; */
-  /* width: 50%; */
+  color: var(--light);
+  transition: all 0.15s ease-in;
+  cursor: pointer;
+  z-index: 2;
 }
 
-#validationYes:hover, #validationNo:hover {
-  color: #111;
+.material-icons.delete {
+  /* position: absolute; */
+  display: none;
 }
+
+/* #validationYes:hover, #validationNo:hover {
+  color: #111;
+} */
 
 ::-webkit-scrollbar{display:none;} 
 
