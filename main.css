@@ -215,7 +215,11 @@ main {
 .task {
   /* border: #6b7280 solid 2px; */
   display: flex;
+  position: absolute;
+  align-items: center;
   justify-content: space-between;
+  overflow: hidden;
+  white-space: nowrap;
   background-color: var(--darkest);
   padding: 1.5rem 2rem;
   height: 4rem;
@@ -254,16 +258,14 @@ main {
 } */
 
 #tasks .task .content {
-  /* border: red solid 1px; */
+  border: red solid 1px;
   width: 100%;
-  /* position: absolute;
-  top: 1.2rem;
-  left: 0; */
-  overflow: hidden;
+  height: 2rem;
+  /* overflow: hidden; */
   display: flex;
   align-items: center;
   justify-content: space-between;
-  column-gap: 1rem;
+  column-gap: 2rem;
 }
 
 #actionValidation .text {
@@ -280,20 +282,18 @@ main {
 }
 
 #dueDate {
-  /* border: blue solid 1px; */
-  /* width: 100%; */
-  /* display: flex; */
-  /* flex-direction: column; */
-  align-content: center;
+  width: 100%;
 }
 
 #tasks .task .content .date {
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  text-align: end;
   flex: 0 0 20%;
   color: var(--grey);
   font-size: 0.9rem;
   /* border: yellow solid 1px; */
-  width: 100%;
-  text-align: end;
 }
 
 #tasks .task .content .tag {
@@ -310,7 +310,7 @@ main {
 
 #tasks .task .content .text {
   /* border: green solid 1px; */
-  flex: 0 0 50%;
+  flex: 0 0 45%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -406,8 +406,35 @@ main {
 }
 
 .material-icons.delete {
-  /* position: absolute; */
+  /* border: #ec4899 solid 1px; */
   display: none;
+  /* animation: rotation 1s linear; */
+}
+
+/* .material-icons.delete:hover {
+  animation: rotation 1s linear;
+} */
+
+.rotate {
+  animation: rotation .2s linear;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(10deg);
+  }
+  50% {
+    transform: rotate(0deg);
+  }
+  75% {
+    transform: rotate(-15deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
 }
 
 /* #validationYes:hover, #validationNo:hover {

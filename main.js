@@ -22,7 +22,7 @@ const createTaskCard = (task) => {
   taskCard.innerHTML = `
     <div id="${task.id}" class="task">
       <div class="content">
-          <div class="text">${task.id}</div>
+          <div class="text">${task.data.text}</div>
           <div id="dueDate">
             <span class="date">${task.data.dueDate}</span>
             <span class="date">${task.data.dueTime}</span>
@@ -44,10 +44,12 @@ const createTaskCard = (task) => {
         onmouseenter="
           this.parentNode.style.background = 'crimson'; 
           this.children[0].style.display = 'none';
-          this.children[1].style.display = 'block'"
+          this.children[1].style.display = 'block';
+          this.children[1].classList.add('rotate')"
         onmouseleave="this.parentNode.style.background = 'var(--darker)';
           this.children[0].style.display = 'block';
-          this.children[1].style.display = 'none'"
+          this.children[1].style.display = 'none';
+          this.children[1].classList.remove('rotate')"
       >
         <p>yes</p>
         <span class="material-icons delete">delete</span>
