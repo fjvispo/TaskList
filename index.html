@@ -9,14 +9,25 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100;400;700;800&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
   <link rel="stylesheet" href="main.css">
 </head>
 <body>
   <header>
-    <h1>Task List</h1>
-    <form>
+    <div class="today-summary"></div>
+      <div class="title">
+        <h1>Today</h1>
+        <span id="today-date" class="today-date"></span>
+      </div>
+      <div class="today-status">
+        <span>You have</span>
+        <button id="today-counter" class="today-counter"></button>
+        <span>tasks</span>
+      </div>
+    <form id="form">
       <div id="new-task-form" style="display: flex; align-items: center;">
-        <input type="text" id="new-task-input" placeholder="Enter new task" onFocus="(this.placeholder='')" onBlur="setPlaceholderStatus(this)" />
+        <input type="text" id="new-task-input" class="new-task-input" placeholder="Start planning your day!" onFocus="(this.placeholder='')" onBlur="setPlaceholderStatus(this)" />
+        <span id="options-toggle" class="material-icons options-toggle" onClick="toggleOptions(this); console.log('clicked')">tune</span>
         <button type="button" id="new-task-submit">
           <div style="display: flex; align-items: center; justify-content: center;">
             <span id="add-icon">+</span>
@@ -27,21 +38,74 @@
       <!-- <div id="task-options-icon-container">
         <img id="task-options-toggle" src="Resources/Arrow-down.svg" alt="Arrow button to display task options" />
       </div> -->
-      <div id="task-Options-inputs">
-        <div id="date-picker">
-          <input id="due-date-input" type="text" class="due-date-input" onFocus="(this.type='date', this.className='due-date-focused')" onBlur="setPlaceholderStatus(this)" placeholder="Due date"/>
-          <input id="due-time-input" type="text" class="due-time-input" onFocus="(this.type='time', this.className='due-time-focused')" onBlur="setPlaceholderStatus(this)" placeholder="Due time"/>
+      <div id="form-options-wrapper" class="form-options-wrapper" editable="true">
+        <div id="task-Options-inputs">
+          <div id="date-picker">
+            <input id="due-date-input" type="text" class="due-date-input" placeholder="Due date"/>
+            <input id="due-time-input" type="text" class="due-time-input" placeholder="Due time"/>
+          </div>
+          <div id="tag-selector">
+            <span class="material-icons tag">tag</span>
+            <input id="tag-input" class="tag-input" type="text" placeholder="Add a tag" onFocus="(this.placeholder='')" onBlur="setPlaceholderStatus(this)">
+          </div>
         </div>
-        <div id="tag-selector">
-          <input id="tag-input" type="text" placeholder="Add a tag" onFocus="(this.placeholder='')" onBlur="setPlaceholderStatus(this)">
-        </div>
+        <div id="description-input" class="description-input" contenteditable="true" status="default"
+          onfocus="addNote(this)"
+          onblur="setPlaceholderStatus(this)"
+          >Add a note</div>
       </div>
     </form>
   </header>
   <main>
+    <section class="filter-list">
+      <h2>Filters</h2>
+      <div class="tagWidgets">
+        <div class="tagCard" onmouseenter="this.style.backgroundColor = '#c830b2'" onmouseleave="this.style.backgroundColor = 'var(--darkplus)'">
+          <div class="tagHead">
+            <span class="material-icons tag">tag</span>
+            <span class="tagTitle">Test</span>
+          </div>
+          <span class="taskCounter">15</span>
+        </div>
+        <div class="tagCard" onmouseenter="this.style.backgroundColor = '#48ece9'" onmouseleave="this.style.backgroundColor = 'var(--darkplus)'">
+          <div class="tagHead">
+            <span class="material-icons tag">tag</span>
+            <span class="tagTitle">Supermarket</span>
+          </div>
+          <span class="taskCounter">15</span>
+        </div>
+        <div class="tagCard" onmouseenter="this.style.backgroundColor = '#8aec48'" onmouseleave="this.style.backgroundColor = 'var(--darkplus)'">
+          <div class="tagHead">
+            <span class="material-icons tag">tag</span>
+            <span class="tagTitle">Games</span>
+          </div>
+          <span class="taskCounter">15</span>
+        </div>
+        <div class="tagCard" style="background-color: #ec485b">
+          <span class="tagTitle">Test</span>
+          <span class="taskCounter">15</span>
+        </div>
+      </div>
+    </section>
     <section class="task-list">
       <h2>Tasks</h2>
-      <div id="deleteAll">Delete All</div>
+      <div id="deleteAll" class="deleteAll" 
+        onmouseenter="
+          this.children[0].style.transitionDelay = '.1s';
+          this.children[0].style.display = 'block';
+          this.style.background = 'crimson';
+          this.style.transform = 'width(30%)';
+          this.style.transitionDelay = '.1s';
+          this.children[0].classList.add('rotate')"
+        onmouseleave="
+          this.children[0].style.display = 'none';
+          this.children[0].classList.remove('rotate', 'deleteAllExpanded');
+          this.style.transitionDelay = '0s';
+          this.style.background = 'none'"  
+        >
+        <span class="material-icons delete">delete</span>
+        <span>Delete All</span>
+      </div>
       <div id="tasks">
         <div id="noTasks">
           <div class="noTasks">There are no tasks yet</div>
@@ -52,7 +116,7 @@
             <div class="content">
                 <span class="text">Drink cup of coffee aaaaaaaaaaaaaaaa</span>
                 <div id="dueDate">
-                  <span class="date" type="date">2022-05-12</span>
+                  <span class="date">2022-05-12</span>
                   <span class="date"></span>
                 </div>
                 <span class="tag" style="background-color: #A1f5f2; color: black">Action</span>
@@ -75,5 +139,7 @@
     <div class="footer"><i>Experiment</i> | <i>HTML - CSS - JavaScript</i></div>
   </main>
   <script src="main.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="flatpickr.js"></script>
 </body>
 </html>

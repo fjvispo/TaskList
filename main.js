@@ -1,17 +1,94 @@
 const taskListDiv = document.getElementById("tasks");
 const noTasksDiv = document.getElementById('noTasks');
-const formInputs = document.querySelectorAll("form input");
+const formInputs = document.querySelectorAll('[class*="-input"]');
+const inputTag = formInputs[3].value;
 const submitButton = document.getElementById("new-task-submit");
 const deleteAllButton = document.getElementById("deleteAll");
 const deleteTaskButton = document.getElementsByClassName("delete");
+const todayCounter = document.getElementById("today-counter");
 
-const getTasks = () => {  
-  let tasks = JSON.parse(localStorage.getItem("tasks"));
+const options = {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+  weekday: 'long'
+};
+
+document.getElementById("today-date").innerHTML = new Date().toLocaleDateString('en-AR', options)
+
+const getTasks = ($date, $tag) => {
+  let tasks = [];
+  switch (true) {
+    case $date == undefined && $tag == undefined:
+      tasks = JSON.parse(localStorage.getItem("tasks"));
+      break;
+    case $date !== undefined && $tag == undefined:
+      tasks = JSON.parse(localStorage.getItem("tasks")).filter(function (task) {
+        return task.data.dueDate == $date;
+      });
+      break;
+    case $date == undefined && $tag !== undefined:
+      tasks = JSON.parse(localStorage.getItem("tasks")).filter(function (task) {
+        return task.data.tag == $tag;
+      });
+      break;
+    case $date !== undefined && $tag !== undefined:
+      tasks = JSON.parse(localStorage.getItem("tasks")).filter(function (task) {
+        return task.data.dueDate == $date && task.data.tag == $tag;
+      });
+  };
   if (tasks !== null) {
     return tasks;
   } else {
     return [];
-  }
+  };
+};
+
+
+const updateTodayCounter = () => {
+  let tasksCounter = getTasks(new Date().toISOString().split('T')[0]).length;
+  return todayCounter.innerText = tasksCounter;
+}
+
+todayCounter.addEventListener('click', function() {
+  let date = new Date().toISOString().split('T')[0];
+  populateTaskList(date)
+});
+
+const getTags = () => {
+  let tags = JSON.parse(localStorage.getItem("tags"))
+  if (tags !== null) {
+    return tags;
+  } else {
+    return [];
+  };
+};
+
+const clearTags = () => {
+  localStorage.setItem('tags', "[]");
+  return 'tags Cleared';
+};
+
+var tags = getTags()
+
+const checkTag = () => {
+  return tags.includes(inputTag)
+};
+
+const saveNewTag = () => {
+  tags.push();
+  localStorage.setItem('tags', JSON.stringify(tags));
+};
+
+const validateForm = () => {
+  let hasText = formInputs[0].value.length;
+  let hasDate = formInputs[1].value.length;
+  let hasTime = formInputs[2].value.length;
+  let hasTag = formInputs[3].value.length;
+  
+
+
+  return hasText !== 0 && hasDate !== 0 && hasTime !== 0 && hasTag !== 0;
 };
 
 const createTaskCard = (task) => {
@@ -61,8 +138,9 @@ const createTaskCard = (task) => {
   return taskCard
 }
 
-const populateTaskList = () => {
-  let tasks = getTasks();
+const populateTaskList = ($date, $tag) => {
+  taskListDiv.innerHTML = '';
+  let tasks = getTasks($date, $tag);
   if (tasks.length !== 0) {
     noTasksDiv.style.display = 'none';
     tasks.forEach((task) => {
@@ -72,7 +150,7 @@ const populateTaskList = () => {
   } else {
     taskListDiv.innerHTML = `        
       <div id="noTasks">
-        <div class="noTasks"></div>
+        <div class="noTasks">Still no tasks planned</div>
         <div class="noTasks"></div>
         <div class="noTasks"></div>
       </div>`;
@@ -80,30 +158,31 @@ const populateTaskList = () => {
 };
 
 populateTaskList();
+updateTodayCounter();
 
 const resetForm = () => {
   formInputs.forEach(field => {
     field.value = "";
     setPlaceholderStatus(field);
-  })
+  });
 };
 
-const validateForm = () => {
-  let hasText = formInputs[0].value;
-  let hasDate = formInputs[1].value;
-  let hasTime = formInputs[2].value;
-  let hasTag = formInputs[3].value;
-
-  // console.log('text --->', hasText);
-  // console.log('date --->', hasDate );
-  // console.log('time --->', hasTime );
-  // console.log('tag  --->', hasTag );
-
-  if (hasText === '') {
-    
+function toggleOptions() {
+  let height = document.getElementById('form-options-wrapper').style.maxHeight;
+  let toggle = document.getElementById('options-toggle');
+  console.log('height',height)
+  switch (height) {
+    case '0px': case '':
+      document.getElementById('form-options-wrapper').style.maxHeight = '100rem';
+      toggle.innerText = 'close';
+      toggle.classList.toggle('options-toggle-active');
+      break;
+    case '100rem':
+      document.getElementById('form-options-wrapper').style.maxHeight = '0px';
+      setTimeout(() => {toggle.classList.toggle('options-toggle-active');}, 600);
+      setTimeout(() => {toggle.innerText = 'tune';}, 700);
+      break;
   }
-
-  return hasText;
 };
 
 submitButton.addEventListener('click', function() {
@@ -116,6 +195,7 @@ submitButton.addEventListener('click', function() {
       'dueDate': document.getElementById("due-date-input").value,
       'dueTime': document.getElementById("due-time-input").value,
       'tag': document.getElementById("tag-input").value,
+      'note': document.getElementById("description-input").innerText
     }
   }
   let tasks = getTasks();
@@ -124,7 +204,8 @@ submitButton.addEventListener('click', function() {
   taskListDiv.innerHTML = '';
   populateTaskList();
   resetForm();
-}); 
+  updateTodayCounter();
+});
 
 deleteAllButton.addEventListener('click', function() {
   localStorage.setItem("tasks", "[]");
@@ -132,49 +213,72 @@ deleteAllButton.addEventListener('click', function() {
 });
 
 function deleteTask(elemId) {
-  console.log(elemId); 
   let taskToDelete = document.getElementById(elemId).parentNode;
-  console.log(taskToDelete); 
   let updatedList = getTasks().filter(task => task.id != elemId);
   localStorage.setItem("tasks", JSON.stringify(updatedList));
   taskToDelete.style.width = '0px';
   setTimeout(shrinkRow, 300);
   function shrinkRow() {taskToDelete.style.height = '0px'};
-  setTimeout(deleteRow, 500);
+  // setTimeout(deleteRow, 500);
   function deleteRow() {taskToDelete.remove()}
-  // console.log({elemId})
-  // console.log("updated", updatedList)
-  // taskListDiv.innerHTML = '';
-  // populateTaskList();
-}
+  updateTodayCounter();
+};
 
 function cancelDeleteEnter(elem) {
-  console.log(elem); 
   elem.style.opacity = '0';
-}
+};
 
 function cancelDeleteLeave(elem) {
   elem.style.opacity = '100';
+};
 
-}
+
+function addNote(elem) {
+  let hasUserText = elem.getAttribute('status');
+  switch (hasUserText) {
+    case 'default':
+      elem.innerText = '';
+      elem.style.color = 'var(--light)';
+      elem.setAttribute('status','edited');
+      break;
+    case 'edited':
+      break;
+  }
+};
 
 function setPlaceholderStatus(elem) {
   const element = elem.id
-  if (elem.value === '') {
+  console.log("elem", elem);
+  console.log("elem.value", elem.value);
+  console.log("1st if",elem.value === '');
+  console.log("2nd if",elem.innerText === '');
+
+  console.log("elem.innerText", elem.innerText);
+  if (elem.value === '' || elem.innerText === '') {
     switch (element) {
       case 'tag-input':
-        elem.placeholder = 'Add a tag'
-        break
+        elem.placeholder = 'Add a tag';
+        break;
       case 'new-task-input':
-        elem.placeholder = 'Enter new task'
-        break
+        if (todayCounter.innerText == 0) {
+          elem.placeholder = 'Start planning your day!';
+        } else {
+          elem.placeholder = 'Enter new task';
+        };  
+        break;
       case 'due-date-input':
-        elem.className = "due-date-input"
-        elem.type = "text"
+        elem.className = "due-date-input";
+        elem.type = "text";
         break;
       case 'due-time-input':
-        elem.className = "due-time-input"
-        elem.type = "text"
+        elem.className = "due-time-input";
+        elem.type = "text";
+        break;
+      case 'description-input':
+        elem.style.color = "var(--grey)";
+        elem.innerText = 'Add a note';
+        elem.setAttribute('status', 'default');
+        console.log("entré en setPlaceholder");
         break;
     }
   }
