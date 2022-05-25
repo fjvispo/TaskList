@@ -21,7 +21,7 @@
       </div>
       <div class="today-status">
         <span>You have</span>
-        <button id="today-counter" class="today-counter"></button>
+        <button id="today-counter" class="today-counter" onclick="switchTab('today-tasks')"></button>
         <span>tasks</span>
       </div>
     <form id="form">
@@ -89,6 +89,20 @@
     </section>
     <section class="task-list">
       <h2>Tasks</h2>
+      <ul id="tab-bar" class="tab-bar">
+        <li id="all-tasks" class="all-tasks active" onclick="switchTab(this.id)">
+          <span class="material-icons tab_icon">list</span>
+          <span class="tab_textext">All tasks</span>
+        </li>
+        <li id="today-tasks" class="today-tasks" onclick="switchTab(this.id)">
+          <span class="material-icons tab_icon">wb_sunny</span>
+          <span class="tab_textext">Today</span>
+        </li>
+        <li id="tomorrow-tasks" class="tomorrow-tasks" onclick="switchTab(this.id)">
+          <span class="material-icons tab_icon">next_plan </span>
+          <span class="tab_textext">Tomorrow</span>
+        </li>
+      </ul>
       <div id="deleteAll" class="deleteAll" 
         onmouseenter="
           this.children[0].style.transitionDelay = '.1s';

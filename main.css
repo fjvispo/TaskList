@@ -70,6 +70,10 @@ header h1 {
   cursor: pointer;
 }
 
+.today-counter:hover {
+  text-decoration: underline;
+}
+
 #new-task-form {
   display: flex;
   align-items: center;
@@ -79,7 +83,7 @@ header h1 {
   margin-bottom: 1rem;
 }
 
-input, button, textarea {
+input, button, textarea{
   appearance: none;
   border: none;
   outline: none;
@@ -294,6 +298,52 @@ main {
   font-weight: 300;
   color: var(--grey);
   margin-bottom: 1rem;
+}
+
+#tab-bar {
+  /* border: #8B5Cf6 solid 1px; */
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  column-gap: .5rem;
+  list-style: none;
+}
+
+#tab-bar li {
+  /* border: #8B5Cf6 solid 1px; */
+  color: var(--grey);
+  letter-spacing: .05rem;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  column-gap: .7rem;
+  padding: .7rem 1.3rem;
+  cursor: pointer;
+}
+
+#tab-bar .active {
+  background: var(--darkest);
+  border-radius: 1rem;
+}
+
+#tab-bar .all-tasks.active {
+  color: #1bc2c3;
+  font-weight: 700;
+}
+
+#tab-bar .today-tasks.active {
+  color: #ec4466;
+  font-weight: 700;
+}
+
+#tab-bar .tomorrow-tasks.active {
+  color: #13a7ee;
+  font-weight: 700;
+}
+
+#tab-bar .material-icons {
+  font-size: 1.2rem;
 }
 
 .task-list {

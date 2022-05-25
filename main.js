@@ -50,10 +50,9 @@ const updateTodayCounter = () => {
   return todayCounter.innerText = tasksCounter;
 }
 
-todayCounter.addEventListener('click', function() {
-  let date = new Date().toISOString().split('T')[0];
-  populateTaskList(date)
-});
+// todayCounter.addEventListener('click', function() {
+
+// });
 
 const getTags = () => {
   let tags = JSON.parse(localStorage.getItem("tags"))
@@ -245,6 +244,28 @@ function addNote(elem) {
       break;
   }
 };
+
+function switchTab(elem) {
+  let tab = document.getElementById(elem);
+  let activeTab = document.querySelector("#tab-bar > .active");
+  if (tab !== activeTab) {
+    activeTab.classList.toggle('active');
+    tab.classList.add('active');
+    let date = new Date();
+    switch (elem) {
+      case 'today-tasks':
+        populateTaskList(date.toISOString().split('T')[0]);
+        break;
+      case 'tomorrow-tasks':
+        date.setDate(date.getDate() + 1);
+        populateTaskList(date.toISOString().split('T')[0]);
+        break;
+      case 'all-tasks':
+        populateTaskList();
+        break;
+    };
+  };
+}
 
 function setPlaceholderStatus(elem) {
   const element = elem.id
