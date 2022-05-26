@@ -17,33 +17,32 @@ const options = {
 document.getElementById("today-date").innerHTML = new Date().toLocaleDateString('en-AR', options)
 
 const getTasks = ($date, $tag) => {
-  let tasks = [];
-  switch (true) {
-    case $date == undefined && $tag == undefined:
-      tasks = JSON.parse(localStorage.getItem("tasks"));
-      break;
-    case $date !== undefined && $tag == undefined:
-      tasks = JSON.parse(localStorage.getItem("tasks")).filter(function (task) {
-        return task.data.dueDate == $date;
-      });
-      break;
-    case $date == undefined && $tag !== undefined:
-      tasks = JSON.parse(localStorage.getItem("tasks")).filter(function (task) {
-        return task.data.tag == $tag;
-      });
-      break;
-    case $date !== undefined && $tag !== undefined:
-      tasks = JSON.parse(localStorage.getItem("tasks")).filter(function (task) {
-        return task.data.dueDate == $date && task.data.tag == $tag;
-      });
-  };
+  let tasks = JSON.parse(localStorage.getItem("tasks"));
   if (tasks !== null) {
+    switch (true) {
+      case $date == undefined && $tag == undefined:
+        tasks;
+        break;
+      case $date !== undefined && $tag == undefined:
+        tasks = tasks.filter(function (task) {
+          return task.data.dueDate == $date;
+        });
+        break;
+      case $date == undefined && $tag !== undefined:
+        tasks = tasks.filter(function (task) {
+          return task.data.tag == $tag;
+        });
+        break;
+      case $date !== undefined && $tag !== undefined:
+        tasks = tasks.filter(function (task) {
+          return task.data.dueDate == $date && task.data.tag == $tag;
+        });
+    };
     return tasks;
   } else {
     return [];
   };
 };
-
 
 const updateTodayCounter = () => {
   let tasksCounter = getTasks(new Date().toISOString().split('T')[0]).length;
@@ -169,7 +168,6 @@ const resetForm = () => {
 function toggleOptions() {
   let height = document.getElementById('form-options-wrapper').style.maxHeight;
   let toggle = document.getElementById('options-toggle');
-  console.log('height',height)
   switch (height) {
     case '0px': case '':
       document.getElementById('form-options-wrapper').style.maxHeight = '100rem';
@@ -252,12 +250,15 @@ function switchTab(elem) {
     activeTab.classList.toggle('active');
     tab.classList.add('active');
     let date = new Date();
+    console.log(date)
     switch (elem) {
       case 'today-tasks':
         populateTaskList(date.toISOString().split('T')[0]);
         break;
       case 'tomorrow-tasks':
         date.setDate(date.getDate() + 1);
+        console.log('date', date.toISOString())
+        console.log('param', date.toISOString().split('T')[0]);
         populateTaskList(date.toISOString().split('T')[0]);
         break;
       case 'all-tasks':
@@ -269,12 +270,12 @@ function switchTab(elem) {
 
 function setPlaceholderStatus(elem) {
   const element = elem.id
-  console.log("elem", elem);
-  console.log("elem.value", elem.value);
-  console.log("1st if",elem.value === '');
-  console.log("2nd if",elem.innerText === '');
+  // console.log("elem", elem);
+  // console.log("elem.value", elem.value);
+  // console.log("1st if",elem.value === '');
+  // console.log("2nd if",elem.innerText === '');
 
-  console.log("elem.innerText", elem.innerText);
+  // console.log("elem.innerText", elem.innerText);
   if (elem.value === '' || elem.innerText === '') {
     switch (element) {
       case 'tag-input':
@@ -299,7 +300,6 @@ function setPlaceholderStatus(elem) {
         elem.style.color = "var(--grey)";
         elem.innerText = 'Add a note';
         elem.setAttribute('status', 'default');
-        console.log("entré en setPlaceholder");
         break;
     }
   }
