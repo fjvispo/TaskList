@@ -2,10 +2,13 @@ const taskListDiv = document.getElementById("tasks");
 const noTasksDiv = document.getElementById('noTasks');
 const formInputs = document.querySelectorAll('[class*="-input"]');
 const inputTag = formInputs[3].value;
+const formOptionsWrapper = document.getElementById('form-options-wrapper');
 const submitButton = document.getElementById("new-task-submit");
 const deleteAllButton = document.getElementById("deleteAll");
 const deleteTaskButton = document.getElementsByClassName("delete");
 const todayCounter = document.getElementById("today-counter");
+var clearInputButtons = Array.from(document.getElementsByClassName("clear-field"));
+const todayDate = new Date().toISOString().split('T')[0];
 
 const options = {
   year: 'numeric',
@@ -14,7 +17,7 @@ const options = {
   weekday: 'long'
 };
 
-document.getElementById("today-date").innerHTML = new Date().toLocaleDateString('en-AR', options)
+document.getElementById("today-date").innerText = new Date().toLocaleDateString('en-AR', options)
 
 const getTasks = ($date, $tag) => {
   let tasks = JSON.parse(localStorage.getItem("tasks"));
@@ -44,15 +47,13 @@ const getTasks = ($date, $tag) => {
   };
 };
 
+
 const updateTodayCounter = () => {
   let tasksCounter = getTasks(new Date().toISOString().split('T')[0]).length;
   return todayCounter.innerText = tasksCounter;
 }
 
-// todayCounter.addEventListener('click', function() {
-
-// });
-
+// TODO - Manage tags | add color select
 const getTags = () => {
   let tags = JSON.parse(localStorage.getItem("tags"))
   if (tags !== null) {
@@ -78,15 +79,11 @@ const saveNewTag = () => {
   localStorage.setItem('tags', JSON.stringify(tags));
 };
 
+// TODO : validate form
 const validateForm = () => {
   let hasText = formInputs[0].value.length;
-  let hasDate = formInputs[1].value.length;
-  let hasTime = formInputs[2].value.length;
-  let hasTag = formInputs[3].value.length;
   
-
-
-  return hasText !== 0 && hasDate !== 0 && hasTime !== 0 && hasTag !== 0;
+  return hasText !== 0 
 };
 
 const createTaskCard = (task) => {
@@ -95,7 +92,7 @@ const createTaskCard = (task) => {
   taskCard.classList.add("taskWrapper");
   // insert taskCard HTML
   taskCard.innerHTML = `
-    <div id="${task.id}" class="task">
+    <div id="${task.id}" class="task ${task.status}">
       <div class="content">
           <div class="text">${task.data.text}</div>
           <div id="dueDate">
@@ -162,37 +159,85 @@ const resetForm = () => {
   formInputs.forEach(field => {
     field.value = "";
     setPlaceholderStatus(field);
+    if (field.classList.contains('due-date-input') || field.classList.contains('due-time-input')) {
+      field._flatpickr.clear();
+    }
   });
 };
 
+clearInputButtons.forEach(button => {
+  button.addEventListener('click', function() {
+    let buttonIndex = clearInputButtons.map(e => e.id).indexOf(this.id);
+    if (this.id === 'clearDateInput' || this.id === 'clearTimeInput') {
+      formInputs[buttonIndex]._flatpickr.clear();
+    }
+    formInputs[buttonIndex].value = '';
+  })
+});
+
 function toggleOptions() {
-  let height = document.getElementById('form-options-wrapper').style.maxHeight;
+  let display = getComputedStyle(formOptionsWrapper).display;
   let toggle = document.getElementById('options-toggle');
-  switch (height) {
-    case '0px': case '':
-      document.getElementById('form-options-wrapper').style.maxHeight = '100rem';
+  switch (display) {
+    case 'none': case '':
+      formOptionsWrapper.classList.toggle('form-options-wrapper-active');
       toggle.innerText = 'close';
       toggle.classList.toggle('options-toggle-active');
       break;
-    case '100rem':
-      document.getElementById('form-options-wrapper').style.maxHeight = '0px';
-      setTimeout(() => {toggle.classList.toggle('options-toggle-active');}, 600);
-      setTimeout(() => {toggle.innerText = 'tune';}, 700);
+    case 'block':
+      formOptionsWrapper.classList.toggle('form-options-wrapper-active');
+      toggle.classList.toggle('options-toggle-active');
+      toggle.innerText = 'tune';
       break;
   }
 };
 
+const setDueDateValue = () => {
+  if (!formInputs[1].value) {
+    return dueDate = todayDate;
+  } else {
+    return dueDate = formInputs[1].value;
+  }
+};
+
+const setDueTimeValue = () => {
+  if (!formInputs[2].value) {
+    return dueTime = 'anytime';
+  } else {
+    return dueDate = formInputs[2].value;
+  }
+};
+
+const setTagValue = () => {
+  if (!formInputs[3].value) {
+    return tagValue = 'untagged';
+  } else {
+    return tagValue = formInputs[3].value;
+  }
+};
+
+// NEW TASK - FORM SUBMIT
 submitButton.addEventListener('click', function() {
   validateForm();
+  console.log(validateForm());
+
+  // if (validateForm() === true) {
+  //   let text = formInputs[0].value;
+  //   // let dueDate = 
+    
+  // } else {
+    
+  // }
+
   let newTaskData = {
     'id': Date.now(),
     'status': 'planned',
     'data': {
-      'text': document.getElementById("new-task-input").value,
-      'dueDate': document.getElementById("due-date-input").value,
-      'dueTime': document.getElementById("due-time-input").value,
-      'tag': document.getElementById("tag-input").value,
-      'note': document.getElementById("description-input").innerText
+      'text': formInputs[0].innerText,
+      'dueDate': setDueDateValue(),
+      'dueTime': setDueTimeValue(),
+      'tag': setTagValue(),
+      'note': formInputs[4].innerText
     }
   }
   let tasks = getTasks();
@@ -229,7 +274,6 @@ function cancelDeleteLeave(elem) {
   elem.style.opacity = '100';
 };
 
-
 function addNote(elem) {
   let hasUserText = elem.getAttribute('status');
   switch (hasUserText) {
@@ -246,20 +290,20 @@ function addNote(elem) {
 function switchTab(elem) {
   let tab = document.getElementById(elem);
   let activeTab = document.querySelector("#tab-bar > .active");
+  let date = new Date();
+  let today = date.toISOString().split('T')[0];
+  date.setDate(date.getDate() + 1);
+  let tomorrow = date.toISOString().split('T')[0];
+  
   if (tab !== activeTab) {
     activeTab.classList.toggle('active');
     tab.classList.add('active');
-    let date = new Date();
-    console.log(date)
     switch (elem) {
       case 'today-tasks':
-        populateTaskList(date.toISOString().split('T')[0]);
+        populateTaskList(today);
         break;
       case 'tomorrow-tasks':
-        date.setDate(date.getDate() + 1);
-        console.log('date', date.toISOString())
-        console.log('param', date.toISOString().split('T')[0]);
-        populateTaskList(date.toISOString().split('T')[0]);
+        populateTaskList(tomorrow);
         break;
       case 'all-tasks':
         populateTaskList();
@@ -270,12 +314,6 @@ function switchTab(elem) {
 
 function setPlaceholderStatus(elem) {
   const element = elem.id
-  // console.log("elem", elem);
-  // console.log("elem.value", elem.value);
-  // console.log("1st if",elem.value === '');
-  // console.log("2nd if",elem.innerText === '');
-
-  // console.log("elem.innerText", elem.innerText);
   if (elem.value === '' || elem.innerText === '') {
     switch (element) {
       case 'tag-input':
@@ -290,11 +328,11 @@ function setPlaceholderStatus(elem) {
         break;
       case 'due-date-input':
         elem.className = "due-date-input";
-        elem.type = "text";
+        // elem.type = "text";
         break;
       case 'due-time-input':
         elem.className = "due-time-input";
-        elem.type = "text";
+        // elem.type = "text";
         break;
       case 'description-input':
         elem.style.color = "var(--grey)";

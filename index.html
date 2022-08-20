@@ -14,20 +14,23 @@
 </head>
 <body>
   <header>
-    <div class="today-summary"></div>
+    <div class="today-summary">
       <div class="title">
         <h1>Today</h1>
-        <span id="today-date" class="today-date"></span>
+        <span id="today-date" class="today-date" onload="setTodayDateTitle()"></span>
       </div>
       <div class="today-status">
         <span>You have</span>
         <button id="today-counter" class="today-counter" onclick="switchTab('today-tasks')"></button>
         <span>tasks</span>
       </div>
+    </div>
+    <!-- <div include-html="src/todaySummary.html"></div> -->
     <form id="form">
-      <div id="new-task-form" style="display: flex; align-items: center;">
+      <div id="new-task-form">
         <input type="text" id="new-task-input" class="new-task-input" placeholder="Start planning your day!" onFocus="(this.placeholder='')" onBlur="setPlaceholderStatus(this)" />
-        <span id="options-toggle" class="material-icons options-toggle" onClick="toggleOptions(this); console.log('clicked')">tune</span>
+        <span id="clearTextInput" class="material-icons clear-field">cancel</span>
+        <span id="options-toggle" class="material-icons options-toggle" onClick="toggleOptions(this);">tune</span>
         <button type="button" id="new-task-submit">
           <div style="display: flex; align-items: center; justify-content: center;">
             <span id="add-icon">+</span>
@@ -41,8 +44,16 @@
       <div id="form-options-wrapper" class="form-options-wrapper" editable="true">
         <div id="task-Options-inputs">
           <div id="date-picker">
-            <input id="due-date-input" type="text" class="due-date-input" placeholder="Due date"/>
-            <input id="due-time-input" type="text" class="due-time-input" placeholder="Due time"/>
+            <div class="date-picker-wrapper">
+              <span class="material-icons calendar">today</span>
+              <input id="due-date-input" type="text" class="due-date-input" placeholder="Due date"/>
+              <span id="clearDateInput" class="material-icons clear-field">cancel</span>
+            </div>
+            <div class="time-picker-wrapper">
+              <span class="material-icons time">schedule</span>
+              <input id="due-time-input" type="text" class="due-time-input" placeholder="Due time"/>
+              <span id="clearTimeInput" class="material-icons clear-field">cancel</span>
+            </div>
           </div>
           <div id="tag-selector">
             <span class="material-icons tag">tag</span>
@@ -57,7 +68,7 @@
     </form>
   </header>
   <main>
-    <section class="filter-list">
+    <!-- <section class="filter-list">
       <h2>Filters</h2>
       <div class="tagWidgets">
         <div class="tagCard" onmouseenter="this.style.backgroundColor = '#c830b2'" onmouseleave="this.style.backgroundColor = 'var(--darkplus)'">
@@ -86,66 +97,67 @@
           <span class="taskCounter">15</span>
         </div>
       </div>
-    </section>
+    </section> -->
     <section class="task-list">
-      <h2>Tasks</h2>
-      <ul id="tab-bar" class="tab-bar">
-        <li id="all-tasks" class="all-tasks active" onclick="switchTab(this.id)">
-          <span class="material-icons tab_icon">list</span>
-          <span class="tab_textext">All tasks</span>
-        </li>
-        <li id="today-tasks" class="today-tasks" onclick="switchTab(this.id)">
-          <span class="material-icons tab_icon">wb_sunny</span>
-          <span class="tab_textext">Today</span>
-        </li>
-        <li id="tomorrow-tasks" class="tomorrow-tasks" onclick="switchTab(this.id)">
-          <span class="material-icons tab_icon">next_plan </span>
-          <span class="tab_textext">Tomorrow</span>
-        </li>
-      </ul>
-      <div id="deleteAll" class="deleteAll" 
-        onmouseenter="
-          this.children[0].style.transitionDelay = '.1s';
-          this.children[0].style.display = 'block';
-          this.style.background = 'crimson';
-          this.style.transform = 'width(30%)';
-          this.style.transitionDelay = '.1s';
-          this.children[0].classList.add('rotate')"
-        onmouseleave="
-          this.children[0].style.display = 'none';
-          this.children[0].classList.remove('rotate', 'deleteAllExpanded');
-          this.style.transitionDelay = '0s';
-          this.style.background = 'none'"  
-        >
-        <span class="material-icons delete">delete</span>
-        <span>Delete All</span>
-      </div>
-      <div id="tasks">
-        <div id="noTasks">
-          <div class="noTasks">There are no tasks yet</div>
-          <div class="noTasks">Enter a new task and start planning!</div>
+      <div class="title-wrapper">
+        <h2>Tasks</h2>
+        <ul id="tab-bar" class="tab-bar">
+          <li id="all-tasks" class="all-tasks active" onclick="switchTab(this.id)">
+            <span class="material-icons tab_icon">list</span>
+            <span class="tab_textext">All tasks</span>
+          </li>
+          <li id="today-tasks" class="today-tasks" onclick="switchTab(this.id)">
+            <span class="material-icons tab_icon">wb_sunny</span>
+            <span class="tab_textext">Today</span>
+          </li>
+          <li id="tomorrow-tasks" class="tomorrow-tasks" onclick="switchTab(this.id)">
+            <span class="material-icons tab_icon">next_plan </span>
+            <span class="tab_textext">Tomorrow</span>
+          </li>
+        </ul>
+        <div id="deleteAll" class="deleteAll">
+          <span class="material-icons delete">delete</span>
+          <span>Delete All</span>
         </div>
-        <div class="taskWrapper">
-          <div class="task">
-            <div class="content">
-                <span class="text">Drink cup of coffee aaaaaaaaaaaaaaaa</span>
-                <div id="dueDate">
-                  <span class="date">2022-05-12</span>
-                  <span class="date"></span>
-                </div>
-                <span class="tag" style="background-color: #A1f5f2; color: black">Action</span>
-                <div id="taskActions" class="actions" style="display: flex; align-items: center;">
-                  <button class="edit">Edit</button>
-                  <button class="delete" 
-                    onclick="this.parentNode.parentNode.parentNode.style.width = '55%'"
-                    onblur="this.parentNode.parentNode.parentNode.style.width = '100%'">Delete</button>
-                </div>
-            </div>
+      </div>
+      <div class="taskList-wrapper">
+        <div id="taskSelectors" class="taskSelectors">
+          <span class="material-icons select">radio_button_unchecked</span>
+          <span class="material-icons select">radio_button_unchecked</span>
+          <span class="material-icons select">radio_button_unchecked</span>
+          <span class="material-icons select">radio_button_unchecked</span>
+          <span class="material-icons select">radio_button_unchecked</span>
+          <span class="material-icons select">radio_button_unchecked</span>
+          <span class="material-icons select">radio_button_unchecked</span>
+          <span class="material-icons select">radio_button_unchecked</span>
+        </div>
+        <div id="tasks">
+          <div id="noTasks">
+            <div class="noTasks">There are no tasks yet</div>
+            <div class="noTasks">Enter a new task and start planning!</div>
           </div>
-          <div id="actionValidation" class="validation">
-            <span class="text">Are you sure? it's permanent.</span>
-            <button id="validationYes" onclick="deleteTask(this.parentNode.previousElementSibling.id)" >Yes</button>
-            <button id="validationNo" onclick="cancelDelete(this.parentNode.previousElementSibling.id)">No </button>
+          <div class="taskWrapper">
+            <div class="task">
+              <div class="content">
+                  <span class="text">Drink cup of coffee aaaaaaaaaaaaaaaa</span>
+                  <div id="dueDate">
+                    <span class="date">2022-05-12</span>
+                    <span class="date"></span>
+                  </div>
+                  <span class="tag" style="background-color: #A1f5f2; color: black">Action</span>
+                  <div id="taskActions" class="actions" style="display: flex; align-items: center;">
+                    <button class="edit">Edit</button>
+                    <button class="delete" 
+                      onclick="this.parentNode.parentNode.parentNode.style.width = '55%'"
+                      onblur="this.parentNode.parentNode.parentNode.style.width = '100%'">Delete</button>
+                  </div>
+              </div>
+            </div>
+            <div id="actionValidation" class="validation">
+              <span class="text">Are you sure? it's permanent.</span>
+              <button id="validationYes" onclick="deleteTask(this.parentNode.previousElementSibling.id)" >Yes</button>
+              <button id="validationNo" onclick="cancelDelete(this.parentNode.previousElementSibling.id)">No </button>
+            </div>
           </div>
         </div>
       </div>
@@ -155,5 +167,7 @@
   <script src="main.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script src="flatpickr.js"></script>
+  <!-- <script src="includeHTML.js"></script>
+  <script>includeHTML()</script> -->
 </body>
 </html>
