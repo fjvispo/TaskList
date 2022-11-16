@@ -10,6 +10,7 @@ const todayCounter = document.getElementById("today-counter");
 var clearInputButtons = Array.from(document.getElementsByClassName("clear-field"));
 const todayDate = new Date().toISOString().split('T')[0];
 
+// CALENDAR //
 const options = {
   year: 'numeric',
   month: 'long',
@@ -19,6 +20,7 @@ const options = {
 
 document.getElementById("today-date").innerText = new Date().toLocaleDateString('en-AR', options)
 
+// FUNCTIONS //
 const getTasks = ($date, $tag) => {
   let tasks = JSON.parse(localStorage.getItem("tasks"));
   if (tasks !== null) {
@@ -46,7 +48,6 @@ const getTasks = ($date, $tag) => {
     return [];
   };
 };
-
 
 const updateTodayCounter = () => {
   let tasksCounter = getTasks(new Date().toISOString().split('T')[0]).length;
@@ -220,14 +221,6 @@ const setTagValue = () => {
 submitButton.addEventListener('click', function() {
   validateForm();
   console.log(validateForm());
-
-  // if (validateForm() === true) {
-  //   let text = formInputs[0].value;
-  //   // let dueDate = 
-    
-  // } else {
-    
-  // }
 
   let newTaskData = {
     'id': Date.now(),
